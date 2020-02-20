@@ -13,6 +13,8 @@ using System.Threading;
 
 namespace FFImageLoading.Svg.Platform
 {
+	public delegate SKTypeface SKTypefaceResolver(string familyName, SKFontStyleWeight fontWeight, SKFontStyleWidth fontWidth, SKFontStyleSlant fontStyle);
+
 	[Preserve(AllMembers = true)]
 	public class SKSvg
 	{
@@ -62,6 +64,8 @@ namespace FFImageLoading.Svg.Platform
 			PixelsPerInch = pixelsPerInch;
 			ThrowOnUnsupportedElement = DefaultThrowOnUnsupportedElement;
 		}
+
+		public static SKTypefaceResolver SKTypefaceResolver { get; set; }
 
 		public float PixelsPerInch { get; set; }
 
@@ -805,7 +809,7 @@ namespace FFImageLoading.Svg.Platform
 			if (style.TryGetValue("font-family", out var ffamily))
 				fontFamily = ffamily;
 
-			var typeface = SKTypeface.FromFamilyName(fontFamily, fontWeight, fontWidth, fontStyle);
+			var typeface = (SKTypefaceResolver ?? SKTypeface.FromFamilyName)(fontFamily, fontWeight, fontWidth, fontStyle);
 
 			if (stroke != null)
 				stroke.Typeface = typeface;
